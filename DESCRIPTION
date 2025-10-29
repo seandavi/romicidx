@@ -24,3 +24,4 @@ Suggests:
     knitr,
     quarto
 VignetteBuilder: quarto
+URL: https://seandavi.github.io/romicidx/
