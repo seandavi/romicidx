@@ -55,7 +55,13 @@ The connection can also be used with the `dplyr` package for more convenient dat
 
 ```{r}
 library(dplyr)
+```
+
+```{r}
 sra_studies_tbl <- tbl(con, "sra_studies")
+```
+
+```{r eval=FALSE}
 result <- 
   sra_studies_tbl |>
   head(10) |>
