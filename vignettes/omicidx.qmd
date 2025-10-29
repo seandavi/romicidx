@@ -26,11 +26,9 @@ con <- omicidx_duckdb_connection()
 ```
 
 
-::: {.callout-note}
-This function sets up a read-only connection to the remote DuckDB database hosted remotely. The
+Note that this function sets up a read-only connection to the remote DuckDB database hosted remotely. The
 database doesn't actually contain any data. Instead it contains links to data stored as 
 parquet files in cloud storage. 
-:::
 
 ## Listing Tables
 

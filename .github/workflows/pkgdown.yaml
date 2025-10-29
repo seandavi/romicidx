@@ -36,12 +36,6 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
 
-      - name: Setup Quarto CLI
-        uses: quarto-dev/quarto-actions/setup-quarto@v2
-        with:
-          # use 'latest' or pin a known-good version (e.g. '1.5.0')
-          version: 'latest'
-
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}
