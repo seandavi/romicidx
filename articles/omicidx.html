@@ -84,7 +84,7 @@
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/omicidx_duckdb_connection.html">omicidx_duckdb_connection</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">con</span></span>
-<span><span class="co">#&gt; &lt;duckdb_connection c48f0 driver=&lt;duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric&gt;&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;duckdb_connection 27440 driver=&lt;duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric&gt;&gt;</span></span></code></pre></div>
 </div>
 <p>Note that this function sets up a read-only connection to the remote DuckDB database hosted remotely. The database doesn’t actually contain any data. Instead it contains links to data stored as parquet files in cloud storage.</p>
 </section><section class="level2"><h2 id="listing-tables">Listing Tables<a class="anchor" aria-label="anchor" href="#listing-tables"></a>
@@ -93,7 +93,10 @@
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tables</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbListTables.html" class="external-link">dbListTables</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tables</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tables</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "gpl"              "gse"              "gsm"              "ncbi_bioprojects"</span></span>
+<span><span class="co">#&gt; [5] "ncbi_biosamples"  "sra_experiments"  "sra_runs"         "sra_samples"     </span></span>
+<span><span class="co">#&gt; [9] "sra_studies"</span></span></code></pre></div>
 </div>
 </section><section class="level2"><h2 id="querying-data">Querying Data<a class="anchor" aria-label="anchor" href="#querying-data"></a>
 </h2>
@@ -101,7 +104,40 @@
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"SELECT * FROM sra_runs LIMIT 10"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+<span><span class="co">#&gt;     accession                                        alias experiment_accession</span></span>
+<span><span class="co">#&gt; 1  SRR4652455 P0028_MT_I2722_TTCATACG_L001_R1_001.fastq.gz           SRX2310319</span></span>
+<span><span class="co">#&gt; 2  SRR4661781             FSL_E2-0214_R1.trimmedP.fastq.gz           SRX2310320</span></span>
+<span><span class="co">#&gt; 3  SRR4661782             FSL_K6-1142_R2.trimmedP.fastq.gz           SRX2310321</span></span>
+<span><span class="co">#&gt; 4  SRR4661783             FSL_K6-1030_R2.trimmedP.fastq.gz           SRX2310322</span></span>
+<span><span class="co">#&gt; 5  SRR4661784             FSL_H8-0481_R1.trimmedP.fastq.gz           SRX2310323</span></span>
+<span><span class="co">#&gt; 6  SRR4661785             FSL_H7-0909_R1.trimmedP.fastq.gz           SRX2310324</span></span>
+<span><span class="co">#&gt; 7  SRR4661786             FSL_H7-0676_R1.trimmedP.fastq.gz           SRX2310325</span></span>
+<span><span class="co">#&gt; 8  SRR4661787             FSL_F4-0079_R2.trimmedP.fastq.gz           SRX2310326</span></span>
+<span><span class="co">#&gt; 9  SRR4661788             FSL_H8-0063_R1.trimmedP.fastq.gz           SRX2310327</span></span>
+<span><span class="co">#&gt; 10 SRR4661789             FSL_H8-0534_R2.trimmedP.fastq.gz           SRX2310328</span></span>
+<span><span class="co">#&gt;                                                     identifiers qualities</span></span>
+<span><span class="co">#&gt; 1  P0028_MT_I2722_TTCATACG_L001_R1_001.fastq.gz, SUB2043882, NA          </span></span>
+<span><span class="co">#&gt; 2              FSL_E2-0214_R1.trimmedP.fastq.gz, SUB2043904, NA          </span></span>
+<span><span class="co">#&gt; 3              FSL_K6-1142_R2.trimmedP.fastq.gz, SUB2043904, NA          </span></span>
+<span><span class="co">#&gt; 4              FSL_K6-1030_R2.trimmedP.fastq.gz, SUB2043904, NA          </span></span>
+<span><span class="co">#&gt; 5              FSL_H8-0481_R1.trimmedP.fastq.gz, SUB2043904, NA          </span></span>
+<span><span class="co">#&gt; 6              FSL_H7-0909_R1.trimmedP.fastq.gz, SUB2043904, NA          </span></span>
+<span><span class="co">#&gt; 7              FSL_H7-0676_R1.trimmedP.fastq.gz, SUB2043904, NA          </span></span>
+<span><span class="co">#&gt; 8              FSL_F4-0079_R2.trimmedP.fastq.gz, SUB2043904, NA          </span></span>
+<span><span class="co">#&gt; 9              FSL_H8-0063_R1.trimmedP.fastq.gz, SUB2043904, NA          </span></span>
+<span><span class="co">#&gt; 10             FSL_H8-0534_R2.trimmedP.fastq.gz, SUB2043904, NA          </span></span>
+<span><span class="co">#&gt;    center_name title run_center run_date attributes broker_name  GEO</span></span>
+<span><span class="co">#&gt; 1         &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2         &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3         &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 4         &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 5         &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 6         &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 7         &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 8         &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 9         &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 10        &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span></code></pre></div>
 </div>
 </section><section class="level2"><h2 id="usage-with-dplyr">Usage with dplyr<a class="anchor" aria-label="anchor" href="#usage-with-dplyr"></a>
 </h2>

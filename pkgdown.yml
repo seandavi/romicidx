@@ -3,7 +3,7 @@ pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   omicidx: omicidx.html
-last_built: 2025-10-29T22:12Z
+last_built: 2025-10-29T22:19Z
 urls:
   reference: https://seandavi.github.io/romicidx/reference
   article: https://seandavi.github.io/romicidx/articles
