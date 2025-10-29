@@ -1,0 +1,78 @@
+---
+title: "Getting Started"
+vignette: >
+  %\VignetteIndexEntry{omicidx}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: '#>'
+---
+
+```{r}
+#| label: setup
+library(omicidx)
+```
+
+The `omicidx` package provides an interface to the OmicIDX DuckDB database, which contains a wealth of omics data. This vignette demonstrates how to establish a connection to the database and perform basic queries.
+
+## Establishing a Connection
+
+To connect to the OmicIDX DuckDB database, use the `omicidx_duckdb_connection()` function:
+
+```{r}
+con <- omicidx_duckdb_connection()
+```
+
+
+::: {.callout-note}
+This function sets up a read-only connection to the remote DuckDB database hosted remotely. The
+database doesn't actually contain any data. Instead it contains links to data stored as 
+parquet files in cloud storage. 
+:::
+
+## Listing Tables
+
+Once connected, you can list the available tables in the database:
+
+```{r}
+tables <- DBI::dbListTables(con)
+print(tables)
+```
+
+## Querying Data
+
+Each table in the database can be queried using standard SQL. For example, to retrieve the first 10 rows from the `sra_runs` table:
+
+```{r}
+res <- DBI::dbGetQuery(con, "SELECT * FROM sra_runs LIMIT 10")
+print(res)
+```
+
+## Usage with dplyr
+
+The connection can also be used with the `dplyr` package for more convenient data manipulation. For example, to get the first 10 entries from the `sra_studies` table:
+
+```{r}
+library(dplyr)
+sra_studies_tbl <- tbl(con, "sra_studies")
+result <- 
+  sra_studies_tbl |>
+  head(10) |>
+  collect()
+print(result)
+```
+
+We can do more complex queries as well, such as grouping, counting, and arranging data. For example, to count the number of studies by study type:
+
+```{r}
+studies_by_type <-
+  sra_studies_tbl |>
+  group_by(study_type) |>
+  count() |>
+  arrange(desc(n)) |>
+  head(20) |>
+  collect()
+print(studies_by_type)
+```
