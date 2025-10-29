@@ -61,7 +61,7 @@ library(dplyr)
 sra_studies_tbl <- tbl(con, "sra_studies")
 ```
 
-```{r eval=FALSE}
+```{r}
 result <- 
   sra_studies_tbl |>
   head(10) |>
@@ -71,7 +71,7 @@ print(result)
 
 We can do more complex queries as well, such as grouping, counting, and arranging data. For example, to count the number of studies by study type:
 
-```{r eval=FALSE}
+```{r}
 studies_by_type <-
   sra_studies_tbl |>
   group_by(study_type) |>

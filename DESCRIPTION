@@ -19,7 +19,8 @@ RoxygenNote: 7.3.2
 Depends:
     DBI,
     duckdb,
-    dplyr
+    dplyr,
+    dbplyr
 Suggests: 
     knitr,
     quarto
