@@ -21,8 +21,9 @@ The `omicidx` package provides an interface to the OmicIDX DuckDB database, whic
 
 To connect to the OmicIDX DuckDB database, use the `omicidx_duckdb_connection()` function:
 
-```{r eval=FALSE}
+```{r}
 con <- omicidx_duckdb_connection()
+con
 ```
 
 
