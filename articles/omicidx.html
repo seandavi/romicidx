@@ -13,6 +13,13 @@
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><script src="omicidx_files/libs/quarto-html/popper.min.js"></script><script src="omicidx_files/libs/quarto-html/tippy.umd.min.js"></script><link href="omicidx_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="omicidx_files/libs/quarto-html/light-border.css" rel="stylesheet">
 <!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Getting Started">
+<!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id=G-EWN5JN9XKZ"></script><script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-EWN5JN9XKZ');
+</script>
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -90,7 +97,7 @@
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/omicidx_duckdb_connection.html">omicidx_duckdb_connection</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">con</span></span>
-<span><span class="co">#&gt; &lt;duckdb_connection 39b60 driver=&lt;duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric&gt;&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;duckdb_connection cfb60 driver=&lt;duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric&gt;&gt;</span></span></code></pre></div>
 </div>
 <p>Note that this function sets up a read-only connection to the remote DuckDB database hosted remotely. The database doesn’t actually contain any data. Instead it contains links to data stored as parquet files in cloud storage.</p>
 </section><section class="level2"><h2 id="listing-tables">Listing Tables<a class="anchor" aria-label="anchor" href="#listing-tables"></a>
