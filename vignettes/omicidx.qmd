@@ -21,7 +21,7 @@ The `omicidx` package provides an interface to the OmicIDX DuckDB database, whic
 
 To connect to the OmicIDX DuckDB database, use the `omicidx_duckdb_connection()` function:
 
-```{r}
+```{r eval=FALSE}
 con <- omicidx_duckdb_connection()
 ```
 
@@ -34,7 +34,7 @@ parquet files in cloud storage.
 
 Once connected, you can list the available tables in the database:
 
-```{r}
+```{r eval=FALSE}
 tables <- DBI::dbListTables(con)
 print(tables)
 ```
@@ -43,7 +43,7 @@ print(tables)
 
 Each table in the database can be queried using standard SQL. For example, to retrieve the first 10 rows from the `sra_runs` table:
 
-```{r}
+```{r eval=FALSE}
 res <- DBI::dbGetQuery(con, "SELECT * FROM sra_runs LIMIT 10")
 print(res)
 ```
@@ -52,7 +52,7 @@ print(res)
 
 The connection can also be used with the `dplyr` package for more convenient data manipulation. For example, to get the first 10 entries from the `sra_studies` table:
 
-```{r}
+```{r eval=FALSE}
 library(dplyr)
 sra_studies_tbl <- tbl(con, "sra_studies")
 result <- 
@@ -64,7 +64,7 @@ print(result)
 
 We can do more complex queries as well, such as grouping, counting, and arranging data. For example, to count the number of studies by study type:
 
-```{r}
+```{r eval=FALSE}
 studies_by_type <-
   sra_studies_tbl |>
   group_by(study_type) |>
