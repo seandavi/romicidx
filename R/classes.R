@@ -3,6 +3,19 @@
 #' @description
 #' The `Omicidx` R6 class provides an interface for interacting with the omicidx database.
 #'
+#' @examples 
+#' # # Create a new Omicidx object
+#' omicidx <- Omicidx$new()
+#' # # List all table names in the database
+#' omicidx$table_names()
+#' # Get a dplyr table object for a specific table
+#' sra_studies_tbl <- omicidx$tbl("sra_studies")
+#' # Perform a dplyr query
+#' result <- sra_studies_tbl |>
+#'   filter(study_type == "RNA-Seq") |>
+#'   head(10) |>
+#'   collect()
+#' print(result)
 Omicidx <- R6::R6Class(
   "Omicidx",
   public = list(

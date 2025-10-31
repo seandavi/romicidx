@@ -18,7 +18,42 @@ devtools::install_github("seandavi/romicidx")
 
 ## Usage
 
-### Establishing a Connection
+### Omicidx R6 Class
+
+The `OmicIDX` R6 class provides methods to connect to the DuckDB database and perform queries.
+
+``` r
+library(romicidx)
+omicidx <- Omicidx$new()
+```
+
+To list available tables:
+
+``` r
+tables <- omicidx$list_tables()
+print(tables)
+```
+
+The `omicidx` object also provides methods to perform sql queries and dplyr operations.
+
+``` r
+# SQL query
+res <- omicidx$sql("SELECT * FROM staging.stg_sra_runs LIMIT 10")
+print(res)
+```
+
+``` r
+# dplyr query
+sra_studies_tbl <- omicidx$table("staging.stg_sra_studies")
+result <- sra_studies_tbl |>
+  head(10) |>
+  collect()
+print(result)
+```
+
+
+
+### Duckdb Connection and SQL Queries
 
 Connect to the OmicIDX DuckDB database:
 
