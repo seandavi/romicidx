@@ -20,7 +20,8 @@ Depends:
     DBI,
     duckdb,
     dplyr,
-    dbplyr
+    dbplyr,
+    R6
 Suggests: 
     knitr,
     quarto
