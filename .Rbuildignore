@@ -9,3 +9,5 @@
 ^\.github$
 CLAUDE.md
 ^README\.Rmd$
+^doc$
+^Meta$

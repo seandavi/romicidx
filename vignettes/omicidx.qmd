@@ -12,7 +12,7 @@ knitr:
 
 ```{r}
 #| label: setup
-library(omicidx)
+library(romicidx)
 ```
 
 The `omicidx` package provides an interface to the OmicIDX DuckDB database, which contains a wealth of omics data. This vignette demonstrates how to establish a connection to the database and perform basic queries.
