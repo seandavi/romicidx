@@ -1,6 +1,9 @@
 url: https://seandavi.github.io/romicidx/
 template:
   bootstrap: 5
+  bslib: 
+    bootswatch: materia
+    pkgdown-nav-height: 85px
   includes:
     in_header: |
       <!-- Google tag (gtag.js) -->

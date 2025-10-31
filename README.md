@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# omicidx
+# romicidx
 
 <!-- badges: start -->
 
@@ -28,14 +28,14 @@ devtools::install_github("seandavi/romicidx")
 #> magrittr (2.0.3  -> 2.0.4 ) [CRAN]
 #> duckdb   (1.3.2  -> 1.4.1 ) [CRAN]
 #> Installing 4 packages: pillar, stringr, magrittr, duckdb
-#> Installing packages into '/private/var/folders/41/lf3t3prs7d1467m30dvgxksw0000gp/T/RtmpSmxP9q/temp_libpath30844d293972'
+#> Installing packages into '/private/var/folders/41/lf3t3prs7d1467m30dvgxksw0000gp/T/RtmpSmxP9q/temp_libpath3084f2d0bd7'
 #> (as 'lib' is unspecified)
 #> 
 #> The downloaded binary packages are in
-#>  /var/folders/41/lf3t3prs7d1467m30dvgxksw0000gp/T//RtmpkRkiqN/downloaded_packages
+#>  /var/folders/41/lf3t3prs7d1467m30dvgxksw0000gp/T//RtmpdUiDIw/downloaded_packages
 #> ── R CMD build ─────────────────────────────────────────────────────────────────
-#> * checking for file ‘/private/var/folders/41/lf3t3prs7d1467m30dvgxksw0000gp/T/RtmpkRkiqN/remotes70bb13074f29/seandavi-romicidx-471ea6e/DESCRIPTION’ ... OK
-#> * preparing ‘omicidx’:
+#> * checking for file ‘/private/var/folders/41/lf3t3prs7d1467m30dvgxksw0000gp/T/RtmpdUiDIw/remotes7a093291e033/seandavi-romicidx-78ab6fa/DESCRIPTION’ ... OK
+#> * preparing ‘romicidx’:
 #> * checking DESCRIPTION meta-information ... OK
 #> * checking for LF line-endings in source and make files and shell scripts
 #> * checking for empty or unneeded directories
@@ -45,8 +45,8 @@ devtools::install_github("seandavi/romicidx")
 #>   pipe |> or function shorthand \(...) syntax added in R 4.1.0.
 #>   File(s) using such syntax:
 #>     ‘Omicidx.Rd’
-#> * building ‘omicidx_0.2.0.tar.gz’
-#> Installing package into '/private/var/folders/41/lf3t3prs7d1467m30dvgxksw0000gp/T/RtmpSmxP9q/temp_libpath30844d293972'
+#> * building ‘romicidx_0.2.1.tar.gz’
+#> Installing package into '/private/var/folders/41/lf3t3prs7d1467m30dvgxksw0000gp/T/RtmpSmxP9q/temp_libpath3084f2d0bd7'
 #> (as 'lib' is unspecified)
 ```
 
@@ -191,9 +191,8 @@ Connect to the OmicIDX DuckDB database:
 library(omicidx)
 #> 
 #> Attaching package: 'omicidx'
-#> The following objects are masked from 'package:romicidx':
+#> The following object is masked from 'package:romicidx':
 #> 
-#>     get_omicidx_duckdb_location, omicidx_db_tables,
 #>     omicidx_duckdb_connection
 
 con <- omicidx_duckdb_connection()
