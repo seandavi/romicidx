@@ -15,3 +15,7 @@ template:
 
         gtag('config', 'G-EWN5JN9XKZ');
       </script>
+
+navbar:
+  structure:
+    right: [search, github]
