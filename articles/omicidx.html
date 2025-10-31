@@ -25,7 +25,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">romicidx</a>
 
@@ -50,6 +50,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/seandavi/romicidx/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -64,7 +65,7 @@
 
 
 
-
+      <small class="dont-index">Source: <a href="https://github.com/seandavi/romicidx/blob/main/vignettes/omicidx.qmd" class="external-link"><code>vignettes/omicidx.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
     </div>
 
@@ -103,7 +104,7 @@
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/omicidx_duckdb_connection.html">omicidx_duckdb_connection</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">con</span></span>
-<span><span class="co">#&gt; &lt;duckdb_connection b2e70 driver=&lt;duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric&gt;&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;duckdb_connection dfa50 driver=&lt;duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric&gt;&gt;</span></span></code></pre></div>
 </div>
 <p>Note that this function sets up a read-only connection to the remote DuckDB database hosted remotely. The database doesn’t actually contain any data. Instead it contains links to data stored as parquet files in cloud storage.</p>
 </section><section class="level2"><h2 id="listing-tables">Listing Tables<a class="anchor" aria-label="anchor" href="#listing-tables"></a>

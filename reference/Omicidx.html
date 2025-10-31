@@ -9,7 +9,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">romicidx</a>
 
@@ -28,6 +28,7 @@
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/seandavi/romicidx/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -37,7 +38,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>R6 Class for Omicidx Database Interaction</h1>
-
+      <small class="dont-index">Source: <a href="https://github.com/seandavi/romicidx/blob/main/R/classes.R" class="external-link"><code>R/classes.R</code></a></small>
       <div class="d-none name"><code>Omicidx.Rd</code></div>
     </div>
 
@@ -193,16 +194,19 @@ If the table_name does not exist, an error will be raised.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 16               staging.stg_sra_samples</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 17               staging.stg_sra_studies</span>
 <span class="r-in"><span><span class="co"># Get a dplyr table object for a specific table</span></span></span>
-<span class="r-in"><span><span class="va">sra_studies_tbl</span> <span class="op">&lt;-</span> <span class="va">omicidx</span><span class="op">$</span><span class="fu">tbl</span><span class="op">(</span><span class="st">"sra_studies"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in omicidx$tbl("sra_studies"):</span> Table 'sra_studies' does not exist in the database.</span>
+<span class="r-in"><span><span class="va">sra_studies_tbl</span> <span class="op">&lt;-</span> <span class="va">omicidx</span><span class="op">$</span><span class="fu">tbl</span><span class="op">(</span><span class="st">"staging.stg_sra_studies"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Perform a dplyr query</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">sra_studies_tbl</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">study_type</span> <span class="op">==</span> <span class="st">"RNA-Seq"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'sra_studies_tbl' not found</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'result' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 17</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 17 variables: accession &lt;chr&gt;, study_accession &lt;chr&gt;, title &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   description &lt;chr&gt;, abstract &lt;chr&gt;, study_type &lt;chr&gt;, center_name &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   broker_name &lt;chr&gt;, alias &lt;chr&gt;, BioProject &lt;chr&gt;, GEO &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   pubmed_ids &lt;list&gt;, has_complete_metadata &lt;lgl&gt;, attributes &lt;list&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   identifiers &lt;list&gt;, xrefs &lt;list&gt;, _loaded_at &lt;dttm&gt;</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
