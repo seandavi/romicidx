@@ -13,7 +13,7 @@ knitr:
 ---
 
 ```{r setup}
-library(omicidx)
+library(romicidx)
 library(dplyr)
 library(ggplot2)
 ```
@@ -39,38 +39,11 @@ tables <- omicidx$table_names()
 print(tables)
 ```
 
-The database contains tables organized into schemas. The `staging` schema contains the main data tables for SRA (Sequence Read Archive) entities.
+The database contains tables organized into schemas:
 
-## Database Schema Overview
-
-Let's examine the structure of the database by looking at table counts:
-
-```{r table-counts}
-# Get row counts for each table
-table_list <- tables[[1]]
-
-# Function to safely get table count
-get_table_count <- function(table_name, omicidx_obj) {
-  tryCatch({
-    count <- omicidx_obj$tbl(table_name) %>% 
-      summarize(n = n()) %>% 
-      collect() %>% 
-      pull(n)
-    data.frame(table = table_name, count = count)
-  }, error = function(e) {
-    data.frame(table = table_name, count = NA)
-  })
-}
-
-# Get counts for all tables (this may take a moment)
-table_counts <- lapply(table_list, get_table_count, omicidx_obj = omicidx)
-table_counts_df <- do.call(rbind, table_counts)
-
-# Display table counts
-table_counts_df %>% 
-  arrange(desc(count)) %>%
-  print(n = Inf)
-```
+- `raw.*` - Raw data tables
+- `staging.*` - Cleaned and staged data tables  
+- `mart.*` - Pre-joined mart table for easy querying
 
 ---
 
@@ -120,12 +93,12 @@ top_centers <- studies %>%
 print(top_centers)
 ```
 
-### Studies by Publication Status
+### Studies with Publications
 
 ```{r study-publications}
 # Count studies with associated publications
 studies_with_pubs <- studies %>%
-  mutate(has_publication = !is.na(pubmed_id)) %>%
+  mutate(has_publication = !is.na(pubmed_ids)) %>%
   group_by(has_publication) %>%
   summarize(count = n()) %>%
   collect()
@@ -148,7 +121,7 @@ experiments <- omicidx$tbl("staging.stg_sra_experiments")
 # View sample records
 experiments %>%
   head(10) %>%
-  select(accession, title, study_accession, platform, instrument) %>%
+  select(accession, title, study_accession, platform, instrument_model) %>%
   collect() %>%
   print()
 ```
@@ -171,8 +144,8 @@ print(platform_counts)
 ```{r experiment-instruments}
 # Most common sequencing instruments
 instrument_counts <- experiments %>%
-  filter(!is.na(instrument)) %>%
-  group_by(instrument) %>%
+  filter(!is.na(instrument_model)) %>%
+  group_by(instrument_model) %>%
   summarize(count = n()) %>%
   arrange(desc(count)) %>%
   head(20) %>%
@@ -275,91 +248,43 @@ runs <- omicidx$tbl("staging.stg_sra_runs")
 # View sample records
 runs %>%
   head(10) %>%
-  select(accession, experiment_accession, total_spots, total_bases) %>%
+  select(accession, experiment_accession, run_date) %>%
   collect() %>%
   print()
 ```
 
-### Data Volume Statistics
+### Run Counts by Experiment
 
-```{r run-volume}
-# Calculate total data volume in the database
-volume_stats <- runs %>%
-  summarize(
-    total_runs = n(),
-    total_spots = sum(total_spots, na.rm = TRUE),
-    total_bases = sum(total_bases, na.rm = TRUE),
-    avg_spots_per_run = mean(total_spots, na.rm = TRUE),
-    avg_bases_per_run = mean(total_bases, na.rm = TRUE)
-  ) %>%
+```{r run-counts}
+# Count runs per experiment
+run_counts <- runs %>%
+  group_by(experiment_accession) %>%
+  summarize(run_count = n()) %>%
+  arrange(desc(run_count)) %>%
+  head(20) %>%
   collect()
 
-print(volume_stats)
-```
-
-### Run Size Distribution
-
-```{r run-sizes}
-# Categorize runs by size
-run_size_categories <- runs %>%
-  filter(!is.na(total_bases)) %>%
-  mutate(
-    size_category = case_when(
-      total_bases < 1e9 ~ "< 1 Gb",
-      total_bases < 10e9 ~ "1-10 Gb",
-      total_bases < 100e9 ~ "10-100 Gb",
-      total_bases < 1e12 ~ "100 Gb - 1 Tb",
-      TRUE ~ "> 1 Tb"
-    )
-  ) %>%
-  group_by(size_category) %>%
-  summarize(count = n()) %>%
-  collect()
-
-print(run_size_categories)
-```
-
-### Read Length Patterns
-
-```{r run-read-lengths}
-# Analyze average read lengths
-read_length_stats <- runs %>%
-  filter(!is.na(avg_length), !is.na(total_spots), total_spots > 0) %>%
-  summarize(
-    min_length = min(avg_length, na.rm = TRUE),
-    q25_length = quantile(avg_length, 0.25, na.rm = TRUE),
-    median_length = median(avg_length, na.rm = TRUE),
-    q75_length = quantile(avg_length, 0.75, na.rm = TRUE),
-    max_length = max(avg_length, na.rm = TRUE)
-  ) %>%
-  collect()
-
-print(read_length_stats)
+print(run_counts)
 ```
 
 ---
 
 # Cross-Table Queries
 
-## Linking Studies to Data Volume
+## Linking Studies to Experiments
 
 Let's join multiple tables to answer complex questions:
 
-```{r join-study-volume}
-# Calculate total data volume per study type
-study_volume <- studies %>%
+```{r join-study-experiments}
+# Calculate experiments per study type
+study_experiments <- studies %>%
   inner_join(experiments, by = c("accession" = "study_accession")) %>%
-  inner_join(runs, by = c("accession.y" = "experiment_accession")) %>%
   group_by(study_type) %>%
-  summarize(
-    study_count = n_distinct(accession.x),
-    total_runs = n(),
-    total_bases = sum(total_bases, na.rm = TRUE)
-  ) %>%
-  arrange(desc(total_bases)) %>%
+  summarize(experiment_count = n()) %>%
+  arrange(desc(experiment_count)) %>%
   collect()
 
-print(study_volume)
+print(study_experiments)
 ```
 
 ### Platform Usage by Study Type
@@ -376,8 +301,7 @@ platform_study <- studies %>%
 # Show top platforms for each study type
 platform_study %>%
   group_by(study_type) %>%
-  slice_head(n = 5) %>%
-  print(n = Inf)
+  slice_head(n = 5)
 ```
 
 ### Organism-Specific Study Patterns
@@ -396,105 +320,118 @@ organism_studies <- samples %>%
 # Show top organisms
 organism_studies %>%
   filter(organism %in% c("Homo sapiens", "Mus musculus", "Arabidopsis thaliana", 
-                         "Drosophila melanogaster", "Caenorhabditis elegans")) %>%
-  print(n = Inf)
-```
-
-### Data Generation Timeline
-
-```{r temporal-analysis}
-# Analyze when data was published (if publish_date is available)
-# Note: This query assumes a publish_date or similar field exists
-# You may need to adjust based on actual schema
-
-temporal_query <- studies %>%
-  filter(!is.na(published)) %>%
-  mutate(year = substr(published, 1, 4)) %>%
-  group_by(year) %>%
-  summarize(study_count = n()) %>%
-  arrange(year) %>%
-  collect()
-
-if (nrow(temporal_query) > 0) {
-  print(temporal_query)
-}
+                         "Drosophila melanogaster", "Caenorhabditis elegans"))
 ```
 
 ---
 
-# Advanced Queries
+# Using the SRA Metadata Mart
 
-### RNA-Seq Studies with Human Samples
+## Simplified Queries with the Mart Table
 
-```{r rnaseq-human}
-# Find RNA-Seq studies using human samples
-rnaseq_human <- studies %>%
-  filter(study_type == "Transcriptome Analysis") %>%
-  inner_join(experiments, by = c("accession" = "study_accession")) %>%
-  inner_join(samples, by = c("sample_accession" = "accession")) %>%
-  filter(organism == "Homo sapiens") %>%
-  filter(library_strategy == "RNA-Seq") %>%
-  select(
-    study_accession = accession.x,
-    study_title = title.x,
-    experiment_accession = accession.y,
-    platform,
-    instrument
-  ) %>%
-  head(50) %>%
-  collect()
+The `mart.sra_metadata` table provides pre-joined data for easier querying:
 
-print(rnaseq_human)
+```{r mart-intro}
+# Get a reference to the mart table
+sra_mart <- omicidx$tbl("mart.sra_metadata")
+
+# View the structure
+sra_mart %>%
+  head(10) %>%
+  collect() %>%
+  print()
 ```
 
-### Large-Scale Genomics Projects
+### Finding RNA-Seq Studies
 
-```{r large-projects}
-# Identify large projects (many samples/experiments)
-large_projects <- studies %>%
-  inner_join(experiments, by = c("accession" = "study_accession")) %>%
-  group_by(accession, title, study_type) %>%
+```{r mart-rnaseq}
+# Find RNA-Seq experiments
+rnaseq_data <- sra_mart %>%
+  filter(library_strategy == "RNA-Seq") %>%
+  group_by(organism, platform) %>%
   summarize(experiment_count = n()) %>%
-  filter(experiment_count > 100) %>%
   arrange(desc(experiment_count)) %>%
   head(20) %>%
   collect()
 
-print(large_projects)
+print(rnaseq_data)
 ```
 
-### Platform Technology Evolution
+### Human RNA-Seq Studies
 
-```{r platform-evolution}
-# Compare Illumina instrument usage patterns
-illumina_instruments <- experiments %>%
+```{r mart-human-rnaseq}
+# Find human RNA-Seq studies
+human_rnaseq <- sra_mart %>%
+  filter(organism == "Homo sapiens", library_strategy == "RNA-Seq") %>%
+  select(study_accession, study_title, platform, instrument_model, library_source) %>%
+  head(50) %>%
+  collect()
+
+print(human_rnaseq)
+```
+
+### Instrument Technology Trends
+
+```{r mart-instruments}
+# Analyze Illumina instrument usage
+illumina_instruments <- sra_mart %>%
   filter(platform == "ILLUMINA") %>%
-  filter(!is.na(instrument)) %>%
-  group_by(instrument) %>%
-  summarize(count = n()) %>%
-  arrange(desc(count)) %>%
+  group_by(instrument_model) %>%
+  summarize(experiment_count = n()) %>%
+  arrange(desc(experiment_count)) %>%
   head(15) %>%
   collect()
 
 print(illumina_instruments)
 ```
 
-### Multi-Omics Studies
+---
 
-```{r multiomics}
-# Find studies with multiple types of experiments
-multiomics_studies <- experiments %>%
-  filter(!is.na(library_strategy)) %>%
-  group_by(study_accession, library_strategy) %>%
-  summarize(count = n()) %>%
-  group_by(study_accession) %>%
-  summarize(strategy_count = n(), total_experiments = sum(count)) %>%
+# Advanced Queries
+
+### ChIP-Seq Experiments
+
+```{r chipseq}
+# Find ChIP-Seq experiments
+chipseq_data <- sra_mart %>%
+  filter(library_strategy == "ChIP-Seq") %>%
+  group_by(organism) %>%
+  summarize(experiment_count = n()) %>%
+  arrange(desc(experiment_count)) %>%
+  head(20) %>%
+  collect()
+
+print(chipseq_data)
+```
+
+### Whole Genome Sequencing
+
+```{r wgs}
+# Find WGS studies
+wgs_data <- sra_mart %>%
+  filter(library_strategy == "WGS") %>%
+  group_by(organism, platform) %>%
+  summarize(experiment_count = n()) %>%
+  arrange(desc(experiment_count)) %>%
+  head(20) %>%
+  collect()
+
+print(wgs_data)
+```
+
+### Multi-Strategy Studies
+
+```{r multi-strategy}
+# Find studies using multiple library strategies
+multi_strategy <- sra_mart %>%
+  group_by(study_accession, study_title) %>%
+  summarize(strategy_count = n_distinct(library_strategy)) %>%
   filter(strategy_count > 1) %>%
   arrange(desc(strategy_count)) %>%
   head(20) %>%
   collect()
 
-print(multiomics_studies)
+print(multi_strategy)
 ```
 
 ---
@@ -507,21 +444,19 @@ The `Omicidx` class also supports direct SQL queries for more complex analyses:
 # Example: Complex aggregation using SQL
 sql_query <- "
   SELECT 
-    s.study_type,
-    COUNT(DISTINCT s.accession) as study_count,
-    COUNT(DISTINCT e.accession) as experiment_count,
-    COUNT(DISTINCT r.accession) as run_count
-  FROM staging.stg_sra_studies s
-  LEFT JOIN staging.stg_sra_experiments e ON s.accession = e.study_accession
-  LEFT JOIN staging.stg_sra_runs r ON e.accession = r.experiment_accession
-  WHERE s.study_type IS NOT NULL
-  GROUP BY s.study_type
-  ORDER BY study_count DESC
-  LIMIT 20
+    organism,
+    library_strategy,
+    COUNT(DISTINCT study_accession) as study_count,
+    COUNT(DISTINCT experiment_accession) as experiment_count
+  FROM mart.sra_metadata
+  WHERE organism IN ('Homo sapiens', 'Mus musculus', 'Drosophila melanogaster')
+    AND library_strategy IN ('RNA-Seq', 'ChIP-Seq', 'WGS')
+  GROUP BY organism, library_strategy
+  ORDER BY organism, experiment_count DESC
 "
 
-hierarchy_summary <- omicidx$sql(sql_query)
-print(hierarchy_summary)
+result <- omicidx$sql(sql_query)
+print(result)
 ```
 
 ---
@@ -534,9 +469,10 @@ This vignette has demonstrated various ways to explore the OmicIDX database usin
 2. **Studies**: Analyzing study types, centers, and publication patterns
 3. **Experiments**: Exploring platforms, instruments, and library strategies
 4. **Samples**: Investigating organism diversity and taxonomic distribution
-5. **Runs**: Examining data volume and sequencing characteristics
+5. **Runs**: Examining run-level metadata
 6. **Cross-Table Queries**: Linking multiple tables for comprehensive analyses
-7. **Advanced Queries**: Targeting specific research questions
+7. **Mart Table**: Using pre-joined data for simplified queries
+8. **Advanced Queries**: Targeting specific research questions
 
 The `Omicidx` class provides both high-level dplyr interfaces and direct SQL access, giving you flexibility in how you query and analyze the data. The database is designed for efficient querying of large-scale omics metadata, enabling researchers to discover relevant datasets and understand trends in the field.
 
@@ -545,7 +481,6 @@ The `Omicidx` class provides both high-level dplyr interfaces and direct SQL acc
 - Explore specific organisms or study types relevant to your research
 - Combine OmicIDX metadata with your own analyses
 - Use the database to identify comparable datasets or experimental designs
-- Track trends in sequencing technology adoption and data generation
+- Track trends in sequencing technology adoption
 
 For more information, see the main vignette: `vignette("omicidx")`
-```
