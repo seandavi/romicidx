@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">omicidx</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,7 +87,8 @@
 <span><span class="co">#&gt; Attaching package: 'dbplyr'</span></span>
 <span><span class="co">#&gt; The following objects are masked from 'package:dplyr':</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     ident, sql</span></span></code></pre></div>
+<span><span class="co">#&gt;     ident, sql</span></span>
+<span><span class="co">#&gt; Loading required package: R6</span></span></code></pre></div>
 </div>
 <p>The <code>omicidx</code> package provides an interface to the OmicIDX DuckDB database, which contains a wealth of omics data. This vignette demonstrates how to establish a connection to the database and perform basic queries.</p>
 <section class="level2"><h2 id="establishing-a-connection">Establishing a Connection<a class="anchor" aria-label="anchor" href="#establishing-a-connection"></a>
@@ -97,7 +98,7 @@
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/omicidx_duckdb_connection.html">omicidx_duckdb_connection</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">con</span></span>
-<span><span class="co">#&gt; &lt;duckdb_connection cfb60 driver=&lt;duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric&gt;&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;duckdb_connection 54a50 driver=&lt;duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric&gt;&gt;</span></span></code></pre></div>
 </div>
 <p>Note that this function sets up a read-only connection to the remote DuckDB database hosted remotely. The database doesn’t actually contain any data. Instead it contains links to data stored as parquet files in cloud storage.</p>
 </section><section class="level2"><h2 id="listing-tables">Listing Tables<a class="anchor" aria-label="anchor" href="#listing-tables"></a>
@@ -107,50 +108,64 @@
 <div class="sourceCode cell-code" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tables</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbListTables.html" class="external-link">dbListTables</a></span><span class="op">(</span><span class="va">con</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tables</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "gpl"              "gse"              "gsm"              "ncbi_bioprojects"</span></span>
-<span><span class="co">#&gt; [5] "ncbi_biosamples"  "sra_experiments"  "sra_runs"         "sra_samples"     </span></span>
-<span><span class="co">#&gt; [9] "sra_studies"</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] "_catalog"             "ncbi_biosamples"      "sra_experiments"     </span></span>
+<span><span class="co">#&gt;  [4] "sra_metadata"         "sra_runs"             "sra_samples"         </span></span>
+<span><span class="co">#&gt;  [7] "sra_studies"          "stg_geo_platforms"    "stg_geo_samples"     </span></span>
+<span><span class="co">#&gt; [10] "stg_geo_series"       "stg_ncbi_bioprojects" "stg_ncbi_biosamples" </span></span>
+<span><span class="co">#&gt; [13] "stg_sra_accessions"   "stg_sra_experiments"  "stg_sra_runs"        </span></span>
+<span><span class="co">#&gt; [16] "stg_sra_samples"      "stg_sra_studies"</span></span></code></pre></div>
 </div>
 </section><section class="level2"><h2 id="querying-data">Querying Data<a class="anchor" aria-label="anchor" href="#querying-data"></a>
 </h2>
 <p>Each table in the database can be queried using standard SQL. For example, to retrieve the first 10 rows from the <code>sra_runs</code> table:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"SELECT * FROM sra_runs LIMIT 10"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"SELECT * FROM staging.stg_sra_runs LIMIT 10"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     accession                                        alias experiment_accession</span></span>
-<span><span class="co">#&gt; 1  SRR4652455 P0028_MT_I2722_TTCATACG_L001_R1_001.fastq.gz           SRX2310319</span></span>
-<span><span class="co">#&gt; 2  SRR4661781             FSL_E2-0214_R1.trimmedP.fastq.gz           SRX2310320</span></span>
-<span><span class="co">#&gt; 3  SRR4661782             FSL_K6-1142_R2.trimmedP.fastq.gz           SRX2310321</span></span>
-<span><span class="co">#&gt; 4  SRR4661783             FSL_K6-1030_R2.trimmedP.fastq.gz           SRX2310322</span></span>
-<span><span class="co">#&gt; 5  SRR4661784             FSL_H8-0481_R1.trimmedP.fastq.gz           SRX2310323</span></span>
-<span><span class="co">#&gt; 6  SRR4661785             FSL_H7-0909_R1.trimmedP.fastq.gz           SRX2310324</span></span>
-<span><span class="co">#&gt; 7  SRR4661786             FSL_H7-0676_R1.trimmedP.fastq.gz           SRX2310325</span></span>
-<span><span class="co">#&gt; 8  SRR4661787             FSL_F4-0079_R2.trimmedP.fastq.gz           SRX2310326</span></span>
-<span><span class="co">#&gt; 9  SRR4661788             FSL_H8-0063_R1.trimmedP.fastq.gz           SRX2310327</span></span>
-<span><span class="co">#&gt; 10 SRR4661789             FSL_H8-0534_R2.trimmedP.fastq.gz           SRX2310328</span></span>
-<span><span class="co">#&gt;                                                     identifiers qualities</span></span>
-<span><span class="co">#&gt; 1  P0028_MT_I2722_TTCATACG_L001_R1_001.fastq.gz, SUB2043882, NA          </span></span>
-<span><span class="co">#&gt; 2              FSL_E2-0214_R1.trimmedP.fastq.gz, SUB2043904, NA          </span></span>
-<span><span class="co">#&gt; 3              FSL_K6-1142_R2.trimmedP.fastq.gz, SUB2043904, NA          </span></span>
-<span><span class="co">#&gt; 4              FSL_K6-1030_R2.trimmedP.fastq.gz, SUB2043904, NA          </span></span>
-<span><span class="co">#&gt; 5              FSL_H8-0481_R1.trimmedP.fastq.gz, SUB2043904, NA          </span></span>
-<span><span class="co">#&gt; 6              FSL_H7-0909_R1.trimmedP.fastq.gz, SUB2043904, NA          </span></span>
-<span><span class="co">#&gt; 7              FSL_H7-0676_R1.trimmedP.fastq.gz, SUB2043904, NA          </span></span>
-<span><span class="co">#&gt; 8              FSL_F4-0079_R2.trimmedP.fastq.gz, SUB2043904, NA          </span></span>
-<span><span class="co">#&gt; 9              FSL_H8-0063_R1.trimmedP.fastq.gz, SUB2043904, NA          </span></span>
-<span><span class="co">#&gt; 10             FSL_H8-0534_R2.trimmedP.fastq.gz, SUB2043904, NA          </span></span>
-<span><span class="co">#&gt;    center_name title run_center run_date attributes broker_name  GEO</span></span>
-<span><span class="co">#&gt; 1         &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 2         &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 3         &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 4         &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 5         &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 6         &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 7         &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 8         &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 9         &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 10        &lt;NA&gt;  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;       NULL        &lt;NA&gt; &lt;NA&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt;     accession experiment_accession title run_center run_date center_name</span></span>
+<span><span class="co">#&gt; 1  SRR4652455           SRX2310319  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2  SRR4661781           SRX2310320  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3  SRR4661782           SRX2310321  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 4  SRR4661783           SRX2310322  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 5  SRR4661784           SRX2310323  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 6  SRR4661785           SRX2310324  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 7  SRR4661786           SRX2310325  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 8  SRR4661787           SRX2310326  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 9  SRR4661788           SRX2310327  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 10 SRR4661789           SRX2310328  &lt;NA&gt;       &lt;NA&gt;     &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;    broker_name                                        alias  GEO</span></span>
+<span><span class="co">#&gt; 1         &lt;NA&gt; P0028_MT_I2722_TTCATACG_L001_R1_001.fastq.gz &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2         &lt;NA&gt;             FSL_E2-0214_R1.trimmedP.fastq.gz &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3         &lt;NA&gt;             FSL_K6-1142_R2.trimmedP.fastq.gz &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 4         &lt;NA&gt;             FSL_K6-1030_R2.trimmedP.fastq.gz &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 5         &lt;NA&gt;             FSL_H8-0481_R1.trimmedP.fastq.gz &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 6         &lt;NA&gt;             FSL_H7-0909_R1.trimmedP.fastq.gz &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 7         &lt;NA&gt;             FSL_H7-0676_R1.trimmedP.fastq.gz &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 8         &lt;NA&gt;             FSL_F4-0079_R2.trimmedP.fastq.gz &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 9         &lt;NA&gt;             FSL_H8-0063_R1.trimmedP.fastq.gz &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 10        &lt;NA&gt;             FSL_H8-0534_R2.trimmedP.fastq.gz &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;                                                     identifiers attributes</span></span>
+<span><span class="co">#&gt; 1  P0028_MT_I2722_TTCATACG_L001_R1_001.fastq.gz, SUB2043882, NA       NULL</span></span>
+<span><span class="co">#&gt; 2              FSL_E2-0214_R1.trimmedP.fastq.gz, SUB2043904, NA       NULL</span></span>
+<span><span class="co">#&gt; 3              FSL_K6-1142_R2.trimmedP.fastq.gz, SUB2043904, NA       NULL</span></span>
+<span><span class="co">#&gt; 4              FSL_K6-1030_R2.trimmedP.fastq.gz, SUB2043904, NA       NULL</span></span>
+<span><span class="co">#&gt; 5              FSL_H8-0481_R1.trimmedP.fastq.gz, SUB2043904, NA       NULL</span></span>
+<span><span class="co">#&gt; 6              FSL_H7-0909_R1.trimmedP.fastq.gz, SUB2043904, NA       NULL</span></span>
+<span><span class="co">#&gt; 7              FSL_H7-0676_R1.trimmedP.fastq.gz, SUB2043904, NA       NULL</span></span>
+<span><span class="co">#&gt; 8              FSL_F4-0079_R2.trimmedP.fastq.gz, SUB2043904, NA       NULL</span></span>
+<span><span class="co">#&gt; 9              FSL_H8-0063_R1.trimmedP.fastq.gz, SUB2043904, NA       NULL</span></span>
+<span><span class="co">#&gt; 10             FSL_H8-0534_R2.trimmedP.fastq.gz, SUB2043904, NA       NULL</span></span>
+<span><span class="co">#&gt;    qualities has_complete_run_info          _loaded_at</span></span>
+<span><span class="co">#&gt; 1                            FALSE 2025-10-30 23:06:34</span></span>
+<span><span class="co">#&gt; 2                            FALSE 2025-10-30 23:06:34</span></span>
+<span><span class="co">#&gt; 3                            FALSE 2025-10-30 23:06:34</span></span>
+<span><span class="co">#&gt; 4                            FALSE 2025-10-30 23:06:34</span></span>
+<span><span class="co">#&gt; 5                            FALSE 2025-10-30 23:06:34</span></span>
+<span><span class="co">#&gt; 6                            FALSE 2025-10-30 23:06:34</span></span>
+<span><span class="co">#&gt; 7                            FALSE 2025-10-30 23:06:34</span></span>
+<span><span class="co">#&gt; 8                            FALSE 2025-10-30 23:06:34</span></span>
+<span><span class="co">#&gt; 9                            FALSE 2025-10-30 23:06:34</span></span>
+<span><span class="co">#&gt; 10                           FALSE 2025-10-30 23:06:34</span></span></code></pre></div>
 </div>
 </section><section class="level2"><h2 id="usage-with-dplyr">Usage with dplyr<a class="anchor" aria-label="anchor" href="#usage-with-dplyr"></a>
 </h2>
@@ -161,7 +176,7 @@
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sra_studies_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"sra_studies"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">sra_studies_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tbl.html" class="external-link">tbl</a></span><span class="op">(</span><span class="va">con</span>, <span class="st">"staging.stg_sra_studies"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="downlit sourceCode r">
@@ -170,22 +185,22 @@
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/compute.html" class="external-link">collect</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 10 × 15</span></span>
-<span><span class="co">#&gt;    abstract  BioProject GEO   accession alias attributes center_name broker_name</span></span>
-<span><span class="co">#&gt;    &lt;chr&gt;     &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;     &lt;chr&gt; &lt;list&gt;     &lt;chr&gt;       &lt;chr&gt;      </span></span>
-<span><span class="co">#&gt;  1 The scop… PRJNA77217 &lt;NA&gt;  SRP009395 Fres… &lt;NULL&gt;     Biodiversi… &lt;NA&gt;       </span></span>
-<span><span class="co">#&gt;  2 The aim … PRJNA1480… GSE3… SRP009396 GSE3… &lt;NULL&gt;     GEO         &lt;NA&gt;       </span></span>
-<span><span class="co">#&gt;  3 Parasite… PRJNA51365 &lt;NA&gt;  SRP009397 1131… &lt;df&gt;       JCVI        &lt;NA&gt;       </span></span>
-<span><span class="co">#&gt;  4 Backgrou… &lt;NA&gt;       &lt;NA&gt;  SRP009399 Geno… &lt;NULL&gt;     Umass Medi… &lt;NA&gt;       </span></span>
-<span><span class="co">#&gt;  5 Sacchari… PRJNA1481… GSE3… SRP009401 GSE3… &lt;NULL&gt;     GEO         &lt;NA&gt;       </span></span>
-<span><span class="co">#&gt;  6 The extr… PRJEB2758  &lt;NA&gt;  ERP001015 Seal… &lt;NULL&gt;     ICTAR       &lt;NA&gt;       </span></span>
-<span><span class="co">#&gt;  7 The pres… &lt;NA&gt;       &lt;NA&gt;  SRP009402 Fauc… &lt;NULL&gt;     Graduate U… &lt;NA&gt;       </span></span>
-<span><span class="co">#&gt;  8 To under… &lt;NA&gt;       &lt;NA&gt;  SRP009404 zebr… &lt;NULL&gt;     Shanghai O… &lt;NA&gt;       </span></span>
-<span><span class="co">#&gt;  9 Grana Tr… PRJNA77891 &lt;NA&gt;  SRP009407 Gran… &lt;NULL&gt;     IASMA rese… &lt;NA&gt;       </span></span>
-<span><span class="co">#&gt; 10 Backgrou… PRJNA1483… GSE3… SRP009408 GSE3… &lt;NULL&gt;     GEO         &lt;NA&gt;       </span></span>
-<span><span class="co">#&gt; # ℹ 7 more variables: description &lt;chr&gt;, study_type &lt;chr&gt;,</span></span>
-<span><span class="co">#&gt; #   study_accession &lt;chr&gt;, title &lt;chr&gt;, identifiers &lt;list&gt;, pubmed_ids &lt;list&gt;,</span></span>
-<span><span class="co">#&gt; #   xrefs &lt;list&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; # A tibble: 10 × 17</span></span>
+<span><span class="co">#&gt;    accession study_accession title   description abstract study_type center_name</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;     &lt;chr&gt;           &lt;chr&gt;   &lt;chr&gt;       &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;      </span></span>
+<span><span class="co">#&gt;  1 SRP009395 SRP009395       Subtro… &lt;NA&gt;        The sco… Metagenom… Biodiversi…</span></span>
+<span><span class="co">#&gt;  2 SRP009396 SRP009396       Identi… &lt;NA&gt;        The aim… Other      GEO        </span></span>
+<span><span class="co">#&gt;  3 SRP009397 SRP009397       Entamo… &lt;NA&gt;        Parasit… Whole Gen… JCVI       </span></span>
+<span><span class="co">#&gt;  4 SRP009399 SRP009399       Genome… &lt;NA&gt;        Backgro… Whole Gen… Umass Medi…</span></span>
+<span><span class="co">#&gt;  5 SRP009401 SRP009401       Transc… &lt;NA&gt;        Sacchar… Transcrip… GEO        </span></span>
+<span><span class="co">#&gt;  6 ERP001015 ERP001015       Antarc… Pyrosequen… The ext… Metagenom… ICTAR      </span></span>
+<span><span class="co">#&gt;  7 SRP009402 SRP009402       Charac… &lt;NA&gt;        The pre… Transcrip… Graduate U…</span></span>
+<span><span class="co">#&gt;  8 SRP009404 SRP009404       Transc… &lt;NA&gt;        To unde… Transcrip… Shanghai O…</span></span>
+<span><span class="co">#&gt;  9 SRP009407 SRP009407       Cheese… &lt;NA&gt;        Grana T… Metagenom… IASMA rese…</span></span>
+<span><span class="co">#&gt; 10 SRP009408 SRP009408       MicroR… &lt;NA&gt;        Backgro… Transcrip… GEO        </span></span>
+<span><span class="co">#&gt; # ℹ 10 more variables: broker_name &lt;chr&gt;, alias &lt;chr&gt;, BioProject &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   GEO &lt;chr&gt;, pubmed_ids &lt;list&gt;, has_complete_metadata &lt;lgl&gt;,</span></span>
+<span><span class="co">#&gt; #   attributes &lt;list&gt;, identifiers &lt;list&gt;, xrefs &lt;list&gt;, `_loaded_at` &lt;dttm&gt;</span></span></code></pre></div>
 </div>
 <p>We can do more complex queries as well, such as grouping, counting, and arranging data. For example, to count the number of studies by study type:</p>
 <div class="cell">
@@ -202,10 +217,10 @@
 <span><span class="co">#&gt; # Groups:   study_type [12]</span></span>
 <span><span class="co">#&gt;    study_type                      n</span></span>
 <span><span class="co">#&gt;    &lt;chr&gt;                       &lt;dbl&gt;</span></span>
-<span><span class="co">#&gt;  1 "Other"                    363745</span></span>
-<span><span class="co">#&gt;  2 "Whole Genome Sequencing"  119859</span></span>
-<span><span class="co">#&gt;  3 "Transcriptome Analysis"   112598</span></span>
-<span><span class="co">#&gt;  4 "Metagenomics"              64496</span></span>
+<span><span class="co">#&gt;  1 "Other"                    364910</span></span>
+<span><span class="co">#&gt;  2 "Whole Genome Sequencing"  119980</span></span>
+<span><span class="co">#&gt;  3 "Transcriptome Analysis"   112895</span></span>
+<span><span class="co">#&gt;  4 "Metagenomics"              64548</span></span>
 <span><span class="co">#&gt;  5 "Population Genomics"         835</span></span>
 <span><span class="co">#&gt;  6 "Epigenetics"                 702</span></span>
 <span><span class="co">#&gt;  7 "Cancer Genomics"             429</span></span>
