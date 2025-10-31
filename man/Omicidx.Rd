@@ -12,7 +12,7 @@ omicidx <- Omicidx$new()
 # # List all table names in the database
 omicidx$table_names()
 # Get a dplyr table object for a specific table
-sra_studies_tbl <- omicidx$tbl("sra_studies")
+sra_studies_tbl <- omicidx$tbl("staging.stg_sra_studies")
 # Perform a dplyr query
 result <- sra_studies_tbl |>
   filter(study_type == "RNA-Seq") |>
