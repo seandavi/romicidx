@@ -45,6 +45,7 @@
 <li><a class="dropdown-item" href="../articles/omicidx.html">Getting Started</a></li>
   </ul>
 </li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -104,7 +105,7 @@
 <div class="sourceCode cell-code" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">con</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/omicidx_duckdb_connection.html">omicidx_duckdb_connection</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">con</span></span>
-<span><span class="co">#&gt; &lt;duckdb_connection dfa50 driver=&lt;duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric&gt;&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; &lt;duckdb_connection 7ba50 driver=&lt;duckdb_driver dbdir=':memory:' read_only=FALSE bigint=numeric&gt;&gt;</span></span></code></pre></div>
 </div>
 <p>Note that this function sets up a read-only connection to the remote DuckDB database hosted remotely. The database doesn’t actually contain any data. Instead it contains links to data stored as parquet files in cloud storage.</p>
 </section><section class="level2"><h2 id="listing-tables">Listing Tables<a class="anchor" aria-label="anchor" href="#listing-tables"></a>
