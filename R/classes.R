@@ -16,6 +16,8 @@
 #'   head(10) |>
 #'   collect()
 #' print(result)
+#' 
+#' @export
 Omicidx <- R6::R6Class(
   "Omicidx",
   public = list(

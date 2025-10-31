@@ -1,7 +1,7 @@
-Package: omicidx
+Package: romicidx
 Type: Package
 Title: Relational database access to public omics metadata
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: c(
     person(
       "Sean", "Davis",

@@ -19,6 +19,7 @@ result <- sra_studies_tbl |>
   head(10) |>
   collect()
 print(result)
+
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
