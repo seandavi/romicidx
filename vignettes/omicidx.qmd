@@ -45,7 +45,7 @@ print(tables)
 Each table in the database can be queried using standard SQL. For example, to retrieve the first 10 rows from the `sra_runs` table:
 
 ```{r}
-res <- DBI::dbGetQuery(con, "SELECT * FROM sra_runs LIMIT 10")
+res <- DBI::dbGetQuery(con, "SELECT * FROM staging.stg_sra_runs LIMIT 10")
 print(res)
 ```
 
@@ -58,7 +58,7 @@ library(dplyr)
 ```
 
 ```{r}
-sra_studies_tbl <- tbl(con, "sra_studies")
+sra_studies_tbl <- tbl(con, "staging.stg_sra_studies")
 ```
 
 ```{r}
