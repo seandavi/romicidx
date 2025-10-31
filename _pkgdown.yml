@@ -16,6 +16,16 @@ template:
         gtag('config', 'G-EWN5JN9XKZ');
       </script>
 
+articles:
+- title: Getting Started
+  navbar: ~
+  contents:
+  - omicidx
+- title: Data Exploration
+  navbar: ~
+  contents:
+  - exploring-omicidx-database
+
 navbar:
   structure:
     right: [search, github]
